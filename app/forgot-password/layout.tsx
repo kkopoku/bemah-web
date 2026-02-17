@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
 import { useGenerateToken } from "@/hooks/use-onboarding";
 import { useAuthStore } from "@/stores/auth.store";
@@ -29,12 +30,12 @@ export default function ForgotPasswordLayout({
     return (
       <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
         <div className="flex w-full max-w-xs flex-col items-center gap-6">
-          <a href="#" className="flex items-center gap-2 font-medium">
+          <Link href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
             </div>
             Bemah Inc.
-          </a>
+          </Link>
           <p className="text-muted-foreground text-sm">Loading...</p>
         </div>
       </div>
@@ -44,12 +45,12 @@ export default function ForgotPasswordLayout({
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-xs flex-col gap-6">
-        <a href="/" className="flex items-center gap-2 self-center font-medium">
+        <Link href="/" className="flex items-center gap-2 self-center font-medium">
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <GalleryVerticalEnd className="size-4" />
           </div>
           Bemah Inc.
-        </a>
+        </Link>
         {children}
       </div>
     </div>

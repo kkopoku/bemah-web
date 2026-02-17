@@ -28,13 +28,13 @@ export default function PhoneNumberInput({
   phone,
   label,
   labelClassName,
-}: {
+}: Readonly<{
   setPhone: Dispatch<React.SetStateAction<string | undefined>>;
   dialog: boolean;
   phone?: string;
   label?: string;
   labelClassName?: string;
-}) {
+}>) {
   const [open, setOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("GH");
   const [phoneNumber, setPhoneNumber] = useState(phone || "");
@@ -44,7 +44,7 @@ export default function PhoneNumberInput({
   useEffect(() => {
     if (phoneNumber) {
       const formatter = new AsYouType(
-        countries.find((c) => c.code === selectedCountry)?.code
+        countries.find((c) => c.code === selectedCountry)?.code,
       );
       const formatted = formatter.input(phoneNumber);
 
@@ -57,7 +57,7 @@ export default function PhoneNumberInput({
 
       const valid = isValidPhoneNumber(
         phoneNumber,
-        countries.find((c) => c.code === selectedCountry)?.code
+        countries.find((c) => c.code === selectedCountry)?.code,
       );
       setIsValid(valid);
     } else {
@@ -86,7 +86,7 @@ export default function PhoneNumberInput({
     const value = e.target.value;
 
     const dialCodeRegex = new RegExp(
-      `^\\${countries.find((c) => c.code === selectedCountry)?.dialCode}`
+      `^\\${countries.find((c) => c.code === selectedCountry)?.dialCode}`,
     );
     const valueWithoutDialCode = value.replace(dialCodeRegex, "");
 
@@ -139,7 +139,7 @@ export default function PhoneNumberInput({
                             "mr-2 h-4 w-4",
                             selectedCountry === country.code
                               ? "opacity-100"
-                              : "opacity-0"
+                              : "opacity-0",
                           )}
                         />
                         <div className="flex items-center gap-x-2">
@@ -172,7 +172,7 @@ export default function PhoneNumberInput({
                             "mr-2 h-4 w-4",
                             selectedCountry === country.code
                               ? "opacity-100"
-                              : "opacity-0"
+                              : "opacity-0",
                           )}
                         />
                         <div className="flex items-center gap-x-2">
@@ -200,7 +200,7 @@ export default function PhoneNumberInput({
               "focus-visible:ring-ring",
               isValid === true &&
                 "border-green-500 focus-visible:ring-green-500",
-              isValid === false && "border-red-500 focus-visible:ring-red-500"
+              isValid === false && "border-red-500 focus-visible:ring-red-500",
             )}
             placeholder="Phone number"
           />
