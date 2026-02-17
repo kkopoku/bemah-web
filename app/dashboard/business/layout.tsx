@@ -13,9 +13,9 @@ import { Separator } from "@/components/ui/separator";
 
 export default function BusinessDashboardLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const { user } = useUserStore();
   const router = useRouter();
 

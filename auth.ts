@@ -69,8 +69,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new Error(loginResponse.data.message || "Login failed");
           }
 
-          console.log("Login response:", loginResponse.data);
-
           const { accessToken } = loginResponse.data.data;
 
           const userResponse = await axios.get(
@@ -92,7 +90,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           user = {
             id: userData.id,
-            name: userData.businessAdmin?.name || userData.subscriber?.name || userData.email,
+            name:
+              userData.businessAdmin?.name ||
+              userData.subscriber?.name ||
+              userData.email,
             email: userData.email,
             accessToken: accessToken,
           };
@@ -129,7 +130,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     authorized: async ({ auth }) => {
       // Logged in users are authenticated, otherwise redirect to login page
-      console.log("Auth callback - authorized:", { auth });
       return !!auth;
     },
     jwt({ token, user }) {
