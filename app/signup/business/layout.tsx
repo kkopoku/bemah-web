@@ -1,15 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { GalleryVerticalEnd } from "lucide-react";
+import { useGenerateToken } from "@/hooks/use-onboarding";
+import { useAuthStore } from "@/stores/auth.store";
 
 const steps = [
   { label: "Business Info", path: "/signup/business" },
   { label: "Verify OTP", path: "/signup/business/verify-otp" },
-  { label: "Set Password", path: "/signup/business/set-password" },
-  { label: "Documents", path: "/signup/business/verification-documents" },
-  { label: "Address", path: "/signup/business/proof-of-address" },
-  { label: "Settlement", path: "/signup/business/settlement-account" },
 ];
 
 export default function BusinessOnboardingLayout({
@@ -19,14 +18,44 @@ export default function BusinessOnboardingLayout({
 }) {
   const pathname = usePathname();
   const currentStepIndex = steps.findIndex((s) => s.path === pathname);
+  const { setClientToken, clientToken } = useAuthStore();
+  const generateToken = useGenerateToken();
+  const [isGenerating, setIsGenerating] = useState(!clientToken);
+
+  useEffect(() => {
+    if (clientToken) return;
+
+    generateToken.mutate(undefined, {
+      onSuccess: (data) => {
+        setClientToken(data.data.accessToken);
+        setIsGenerating(false);
+      },
+    });
+  }, []);
+
+  if (isGenerating) {
+    return (
+      <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+        <div className="flex w-full max-w-lg flex-col items-center gap-6">
+          <a
+            href="#"
+            className="flex items-center gap-2 self-center font-medium"
+          >
+            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+              <GalleryVerticalEnd className="size-4" />
+            </div>
+            Bemah Inc.
+          </a>
+          <p className="text-muted-foreground text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="flex w-full max-w-lg flex-col gap-6">
-        <a
-          href="#"
-          className="flex items-center gap-2 self-center font-medium"
-        >
+      <div className="flex w-full max-w-4xl flex-col gap-6">
+        <a href="#" className="flex items-center gap-2 self-center font-medium">
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <GalleryVerticalEnd className="size-4" />
           </div>

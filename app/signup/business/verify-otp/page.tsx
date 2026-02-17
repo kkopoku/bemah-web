@@ -12,21 +12,26 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useVerifyOtp, useRegenerateOtp } from "@/hooks/use-onboarding";
+import {
+  useVerifyBusinessOnboarding,
+  useResendBusinessOnboardingOtp,
+} from "@/hooks/use-onboarding";
 import { useOnboardingStore } from "@/stores/onboarding.store";
+import { useAuthStore } from "@/stores/auth.store";
 import { toast } from "sonner";
 
 export default function VerifyOtpPage() {
   const router = useRouter();
-  const { adminEmail, setCurrentStep } = useOnboardingStore();
-  const mutation = useVerifyOtp();
-  const resendMutation = useRegenerateOtp();
+  const { email, clearOnboarding } = useOnboardingStore();
+  const { clearAccessToken } = useAuthStore();
+  const mutation = useVerifyBusinessOnboarding();
+  const resendMutation = useResendBusinessOnboardingOtp();
   const [otp, setOtp] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!adminEmail) return;
+    if (!email) return;
 
     if (otp.length !== 6) {
       toast.error("Please enter a valid 6-digit OTP code.");
@@ -34,11 +39,13 @@ export default function VerifyOtpPage() {
     }
 
     mutation.mutate(
-      { email: adminEmail, otp },
+      { email, otp },
       {
         onSuccess: () => {
-          setCurrentStep(3);
-          router.push("/signup/business/set-password");
+          clearOnboarding();
+          clearAccessToken();
+          toast.success("Account created! Please log in.");
+          router.push("/");
         },
       },
     );
@@ -50,7 +57,7 @@ export default function VerifyOtpPage() {
         <CardTitle className="text-xl">Verify Your Email</CardTitle>
         <CardDescription>
           Enter the 6-digit code sent to{" "}
-          <span className="font-medium">{adminEmail}</span>
+          <span className="font-medium">{email}</span>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -83,12 +90,14 @@ export default function VerifyOtpPage() {
                 className="text-primary underline underline-offset-4 hover:opacity-80 disabled:opacity-50"
                 disabled={resendMutation.isPending}
                 onClick={() => {
-                  if (!adminEmail) return;
+                  if (!email) return;
                   resendMutation.mutate(
-                    { email: adminEmail },
+                    { email },
                     {
                       onSuccess: () => {
-                        toast.success("A new OTP has been sent to your email.");
+                        toast.success(
+                          "A new OTP has been sent to your email.",
+                        );
                       },
                       onError: (error) => {
                         toast.error(error.message);
