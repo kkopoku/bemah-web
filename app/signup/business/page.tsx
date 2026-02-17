@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { useInitiateOnboarding } from "@/hooks/use-onboarding";
 import { useOnboardingStore } from "@/stores/onboarding.store";
 import { toast } from "sonner";
@@ -182,10 +183,9 @@ export default function BusinessInfoPage() {
             <div className="grid grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="adminPassword">Password</FieldLabel>
-                <Input
+                <PasswordInput
                   id="adminPassword"
                   name="adminPassword"
-                  type="password"
                   value={form.adminPassword}
                   onChange={handleChange}
                   placeholder="Min. 8 characters"
@@ -196,10 +196,9 @@ export default function BusinessInfoPage() {
                 <FieldLabel htmlFor="adminPasswordConfirm">
                   Confirm Password
                 </FieldLabel>
-                <Input
+                <PasswordInput
                   id="adminPasswordConfirm"
                   name="adminPasswordConfirm"
-                  type="password"
                   value={form.adminPasswordConfirm}
                   onChange={handleChange}
                   placeholder="Confirm password"

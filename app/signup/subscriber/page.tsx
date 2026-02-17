@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import {
   Select,
   SelectContent,
@@ -232,10 +233,9 @@ export default function SubscriberInfoPage() {
             <div className="grid grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input
+                <PasswordInput
                   id="password"
                   name="password"
-                  type="password"
                   value={form.password}
                   onChange={handleChange}
                   placeholder="Min. 8 characters"
@@ -246,10 +246,9 @@ export default function SubscriberInfoPage() {
                 <FieldLabel htmlFor="passwordConfirm">
                   Confirm Password
                 </FieldLabel>
-                <Input
+                <PasswordInput
                   id="passwordConfirm"
                   name="passwordConfirm"
-                  type="password"
                   value={form.passwordConfirm}
                   onChange={handleChange}
                   placeholder="Confirm password"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { toast } from "sonner";
 import {
   useForgotPasswordInitiate,
@@ -117,9 +119,9 @@ export function ForgotPasswordForm({
             <Field>
               <FieldDescription className="text-center">
                 Remember your password?{" "}
-                <a href="/" className="underline underline-offset-4">
+                <Link href="/" className="underline underline-offset-4">
                   Back to login
-                </a>
+                </Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
@@ -153,9 +155,8 @@ export function ForgotPasswordForm({
           </Field>
           <Field>
             <FieldLabel htmlFor="newPassword">New Password</FieldLabel>
-            <Input
+            <PasswordInput
               id="newPassword"
-              type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Min. 8 characters"
@@ -166,9 +167,8 @@ export function ForgotPasswordForm({
             <FieldLabel htmlFor="confirmPassword">
               Confirm New Password
             </FieldLabel>
-            <Input
+            <PasswordInput
               id="confirmPassword"
-              type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm password"
@@ -211,9 +211,9 @@ export function ForgotPasswordForm({
           <Field>
             <FieldDescription className="text-center">
               Remember your password?{" "}
-              <a href="/" className="underline underline-offset-4">
+              <Link href="/" className="underline underline-offset-4">
                 Back to login
-              </a>
+              </Link>
             </FieldDescription>
           </Field>
         </FieldGroup>
