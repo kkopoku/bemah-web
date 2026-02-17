@@ -15,25 +15,35 @@ import { Input } from "@/components/ui/input";
 import { useInitiateOnboarding } from "@/hooks/use-onboarding";
 import { useOnboardingStore } from "@/stores/onboarding.store";
 import { toast } from "sonner";
+import PhoneNumberInput from "@/components/phone-number-input";
 
 export default function BusinessInfoPage() {
   const router = useRouter();
-  const { setBusinessId, setAdminEmail, setCurrentStep } = useOnboardingStore();
+  const { setEmail, setCurrentStep } = useOnboardingStore();
   const mutation = useInitiateOnboarding();
+
+  const [businessContactNumber, setBusinessContactNumber] = useState<
+    string | undefined
+  >();
+  const [adminPhoneNumber, setAdminPhoneNumber] = useState<
+    string | undefined
+  >();
 
   const [form, setForm] = useState({
     businessName: "",
-    businessContactNumber: "",
     businessEmail: "",
     businessType: "",
-    tin: "",
     adminName: "",
-    adminPhoneNumber: "",
     adminEmail: "",
+    adminPassword: "",
+    adminPasswordConfirm: "",
   });
+
+  const [validationError, setValidationError] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setValidationError("");
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -46,20 +56,39 @@ export default function BusinessInfoPage() {
 
     if (
       !form.businessName ||
-      !form.businessContactNumber ||
+      !businessContactNumber ||
       !form.businessEmail ||
+      !form.businessType ||
       !form.adminName ||
-      !form.adminPhoneNumber ||
-      !form.adminEmail
+      !adminPhoneNumber ||
+      !form.adminEmail ||
+      !form.adminPassword
     ) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
-    mutation.mutate(form, {
-      onSuccess: (data) => {
-        setBusinessId(data.data?.business?.id);
-        setAdminEmail(form.adminEmail);
+    if (form.adminPassword.length < 8) {
+      setValidationError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    if (form.adminPassword !== form.adminPasswordConfirm) {
+      setValidationError("Passwords do not match.");
+      return;
+    }
+
+    const { adminPasswordConfirm, ...formData } = form;
+
+    const submitData = {
+      ...formData,
+      businessContactNumber: businessContactNumber!,
+      adminPhoneNumber: adminPhoneNumber!,
+    };
+
+    mutation.mutate(submitData, {
+      onSuccess: () => {
+        setEmail(form.adminEmail);
         setCurrentStep(2);
         router.push("/signup/business/verify-otp");
       },
@@ -89,19 +118,12 @@ export default function BusinessInfoPage() {
               />
             </Field>
             <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel htmlFor="businessContactNumber">
-                  Contact Number
-                </FieldLabel>
-                <Input
-                  id="businessContactNumber"
-                  name="businessContactNumber"
-                  value={form.businessContactNumber}
-                  onChange={handleChange}
-                  placeholder="+233 000 000 000"
-                  required
-                />
-              </Field>
+              <PhoneNumberInput
+                setPhone={setBusinessContactNumber}
+                phone={businessContactNumber}
+                dialog={false}
+                label="Contact Number"
+              />
               <Field>
                 <FieldLabel htmlFor="businessEmail">Business Email</FieldLabel>
                 <Input
@@ -115,30 +137,17 @@ export default function BusinessInfoPage() {
                 />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel htmlFor="businessType">
-                  Business Type (optional)
-                </FieldLabel>
-                <Input
-                  id="businessType"
-                  name="businessType"
-                  value={form.businessType}
-                  onChange={handleChange}
-                  placeholder="e.g. Retail"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="tin">TIN (optional)</FieldLabel>
-                <Input
-                  id="tin"
-                  name="tin"
-                  value={form.tin}
-                  onChange={handleChange}
-                  placeholder="Tax ID"
-                />
-              </Field>
-            </div>
+            <Field>
+              <FieldLabel htmlFor="businessType">Business Type</FieldLabel>
+              <Input
+                id="businessType"
+                name="businessType"
+                value={form.businessType}
+                onChange={handleChange}
+                placeholder="e.g. Retail"
+                required
+              />
+            </Field>
             <Field>
               <FieldLabel htmlFor="adminName">Admin Name</FieldLabel>
               <Input
@@ -151,19 +160,12 @@ export default function BusinessInfoPage() {
               />
             </Field>
             <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel htmlFor="adminPhoneNumber">
-                  Admin Phone Number
-                </FieldLabel>
-                <Input
-                  id="adminPhoneNumber"
-                  name="adminPhoneNumber"
-                  value={form.adminPhoneNumber}
-                  onChange={handleChange}
-                  placeholder="+233 000 000 000"
-                  required
-                />
-              </Field>
+              <PhoneNumberInput
+                setPhone={setAdminPhoneNumber}
+                phone={adminPhoneNumber}
+                dialog={false}
+                label="Admin Phone Number"
+              />
               <Field>
                 <FieldLabel htmlFor="adminEmail">Admin Email</FieldLabel>
                 <Input
@@ -177,6 +179,37 @@ export default function BusinessInfoPage() {
                 />
               </Field>
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel htmlFor="adminPassword">Password</FieldLabel>
+                <Input
+                  id="adminPassword"
+                  name="adminPassword"
+                  type="password"
+                  value={form.adminPassword}
+                  onChange={handleChange}
+                  placeholder="Min. 8 characters"
+                  required
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="adminPasswordConfirm">
+                  Confirm Password
+                </FieldLabel>
+                <Input
+                  id="adminPasswordConfirm"
+                  name="adminPasswordConfirm"
+                  type="password"
+                  value={form.adminPasswordConfirm}
+                  onChange={handleChange}
+                  placeholder="Confirm password"
+                  required
+                />
+              </Field>
+            </div>
+            {validationError && (
+              <p className="text-destructive text-sm">{validationError}</p>
+            )}
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? "Submitting..." : "Continue"}
             </Button>
