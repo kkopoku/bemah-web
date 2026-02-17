@@ -101,7 +101,7 @@ const navItems: SidebarNavItem[] = [
 
 export function SubscriberSidebar({
   ...props
-}: React.ComponentProps<typeof AppSidebar>) {
+}: Omit<React.ComponentProps<typeof AppSidebar>, "navItems" | "user" | "teams">) {
   const { user } = useUserStore();
 
   const teams: SidebarTeam[] = [

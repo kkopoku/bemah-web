@@ -106,7 +106,7 @@ const navItems: SidebarNavItem[] = [
 
 export function BusinessSidebar({
   ...props
-}: React.ComponentProps<typeof AppSidebar>) {
+}: Omit<React.ComponentProps<typeof AppSidebar>, "navItems" | "user" | "teams">) {
   const { user } = useUserStore();
 
   const businessName =
