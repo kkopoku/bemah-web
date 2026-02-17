@@ -1,71 +1,95 @@
 import axios from "axios";
-import { apiClient } from "../api-client";
+import { apiClient, clientApiClient } from "../api-client";
+import { clientId, clientSecret } from "@/constants/env";
 
-interface VerifyOtpData {
+interface GenerateTokenResponse {
+  status: string;
+  message: string;
+  data: {
+    accessToken: string;
+    tokenType: string;
+    expiresIn: number;
+  };
+}
+
+export async function generateClientToken(): Promise<GenerateTokenResponse> {
+  try {
+    const response = await apiClient.post(
+      "/auth/token",
+      {
+        clientId,
+        clientSecret,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.data.status !== "success") {
+      throw new Error(response.data.message);
+    }
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+}
+
+export interface ForgotPasswordInitiateData {
+  email: string;
+}
+
+export async function forgotPasswordInitiate(
+  data: ForgotPasswordInitiateData,
+) {
+  try {
+    const response = await clientApiClient.post(
+      "/auth/forgot-password/initiate",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.data.status !== "success") {
+      throw new Error(response.data.message);
+    }
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+}
+
+export interface ForgotPasswordVerifyData {
   email: string;
   otp: string;
+  newPassword: string;
 }
 
-interface RegenerateOtpData {
-  email: string;
-}
-
-interface SetPasswordData {
-  email: string;
-  password: string;
-}
-
-export async function verifyOtp(data: VerifyOtpData) {
+export async function forgotPasswordVerify(data: ForgotPasswordVerifyData) {
   try {
-    const response = await apiClient.post("/auth/verify-otp", data, {
-      headers: {
-        "Content-Type": "application/json",
+    const response = await clientApiClient.post(
+      "/auth/forgot-password/verify",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
-
-    if (response.data.status !== "success") {
-      throw new Error(response.data.message);
-    }
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message);
-    } else {
-      throw new Error("An unexpected error occurred.");
-    }
-  }
-}
-
-export async function regenerateOtp(data: RegenerateOtpData) {
-  try {
-    const response = await apiClient.post("/auth/regenerate-otp", data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.data.status !== "success") {
-      throw new Error(response.data.message);
-    }
-
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message);
-    } else {
-      throw new Error("An unexpected error occurred.");
-    }
-  }
-}
-
-export async function setPassword(data: SetPasswordData) {
-  try {
-    const response = await apiClient.post("/auth/set-password", data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    );
 
     if (response.data.status !== "success") {
       throw new Error(response.data.message);

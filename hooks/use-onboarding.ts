@@ -1,9 +1,20 @@
-import { useMutation } from "@tanstack/react-query";
-import { initiateBusinessOnboarding } from "@/lib/integrations/business";
-import { verifyOtp, regenerateOtp, setPassword } from "@/lib/integrations/auth";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  initiateBusinessOnboarding,
+  verifyBusinessOnboarding,
+  resendBusinessOnboardingOtp,
+  getOnboardingStatus,
+} from "@/lib/integrations/business";
+import { generateClientToken } from "@/lib/integrations/auth";
 import { uploadVerificationDocument } from "@/lib/integrations/business-verification-document";
 import { setProofOfAddress } from "@/lib/integrations/proof-of-address";
 import { addSettlementAccount } from "@/lib/integrations/settlement-account";
+
+export function useGenerateToken() {
+  return useMutation({
+    mutationFn: generateClientToken,
+  });
+}
 
 export function useInitiateOnboarding() {
   return useMutation({
@@ -11,21 +22,15 @@ export function useInitiateOnboarding() {
   });
 }
 
-export function useVerifyOtp() {
+export function useVerifyBusinessOnboarding() {
   return useMutation({
-    mutationFn: verifyOtp,
+    mutationFn: verifyBusinessOnboarding,
   });
 }
 
-export function useRegenerateOtp() {
+export function useResendBusinessOnboardingOtp() {
   return useMutation({
-    mutationFn: regenerateOtp,
-  });
-}
-
-export function useSetPassword() {
-  return useMutation({
-    mutationFn: setPassword,
+    mutationFn: resendBusinessOnboardingOtp,
   });
 }
 
@@ -44,5 +49,16 @@ export function useSetProofOfAddress() {
 export function useAddSettlementAccount() {
   return useMutation({
     mutationFn: addSettlementAccount,
+  });
+}
+
+export function useOnboardingStatus(enabled: boolean = true) {
+  return useQuery({
+    queryKey: ["onboarding-status"],
+    queryFn: async () => {
+      const response = await getOnboardingStatus();
+      return response.data;
+    },
+    enabled,
   });
 }

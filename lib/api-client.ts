@@ -27,6 +27,30 @@ apiClient.interceptors.request.use(
   },
 );
 
+export const clientApiClient = axios.create({
+  baseURL: `${backendUrl}/api/v1/app`,
+  timeout: 30000,
+});
+
+clientApiClient.interceptors.request.use(
+  (config) => {
+    const clientToken = useAuthStore.getState().clientToken;
+
+    if (clientToken) {
+      config.headers.Authorization = `Bearer ${clientToken}`;
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Client API] ${config.method?.toUpperCase()} ${config.url}`);
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 apiClient.interceptors.response.use(
   function onFulfilled(response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
@@ -66,6 +90,39 @@ apiClient.interceptors.response.use(
       }
 
       // Reject the promise so the calling function can still handle the error
+      return Promise.reject(error);
+    }
+    return Promise.reject(error);
+  },
+);
+
+clientApiClient.interceptors.response.use(
+  function onFulfilled(response) {
+    return response;
+  },
+  async function onRejected(error) {
+    const status = error.response?.status;
+    const isLoginPage =
+      typeof window !== "undefined" && window.location.pathname === "/";
+
+    if (process.env.NODE_ENV === "development") {
+      console.error(`[Client API Error] ${status || "Network Error"}:`, {
+        url: error.config?.url,
+        method: error.config?.method,
+        message: error.message,
+        data: error.response?.data,
+      });
+    }
+
+    if (status === 401 && !isLoginPage) {
+      console.error("Client token invalid or expired (401).");
+
+      clearStores();
+
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+
       return Promise.reject(error);
     }
     return Promise.reject(error);
