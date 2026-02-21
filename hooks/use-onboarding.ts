@@ -8,7 +8,7 @@ import {
 import { generateClientToken } from "@/lib/integrations/auth";
 import { uploadVerificationDocument } from "@/lib/integrations/business-verification-document";
 import { setProofOfAddress } from "@/lib/integrations/proof-of-address";
-import { addSettlementAccount } from "@/lib/integrations/settlement-account";
+import { addSettlementAccount, getSettlementProviders } from "@/lib/integrations/settlement-account";
 
 export function useGenerateToken() {
   return useMutation({
@@ -49,6 +49,20 @@ export function useSetProofOfAddress() {
 export function useAddSettlementAccount() {
   return useMutation({
     mutationFn: addSettlementAccount,
+  });
+}
+
+export function useGetSettlementProviders(
+  accountType: "bank" | "momo" | null,
+  country: string = "gh"
+) {
+  return useQuery({
+    queryKey: ["settlement-providers", accountType, country],
+    queryFn: async () => {
+      if (!accountType) return [];
+      return getSettlementProviders({ country, accountType });
+    },
+    enabled: !!accountType,
   });
 }
 
