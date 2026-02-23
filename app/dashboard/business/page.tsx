@@ -9,7 +9,7 @@ export default function BusinessDashboardPage() {
   const { user } = useUserStore();
   const business = user?.businessAdmin?.business;
   const businessId = business?.id;
-  const needsOnboarding = business?.status === "PENDING_ADMIN_APPROVAL";
+  const needsOnboarding = business?.status === "PENDING_KYB_SUBMISSION";
 
   const onboardingStatus = useOnboardingStatus(!!businessId && needsOnboarding);
 
