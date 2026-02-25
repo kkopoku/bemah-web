@@ -10,7 +10,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/password-input";
+import { PasswordInput } from "@/components/inputs/password-input";
 import { toast } from "sonner";
 import { SignIn } from "@/app/actions/sign-in";
 import { useMutation } from "@tanstack/react-query";
@@ -93,7 +93,9 @@ export function LoginForm({
           />
         </Field>
         <Field>
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={mutation.isPending}>
+            {mutation.isPending ? "Logging in..." : "Login"}
+          </Button>
         </Field>
         <Field>
           <FieldDescription className="text-center">

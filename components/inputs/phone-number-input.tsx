@@ -1,6 +1,5 @@
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -21,6 +20,7 @@ import { AsYouType, isValidPhoneNumber } from "libphonenumber-js";
 import { cn } from "@/lib/utils";
 import { DialogTitle } from "@/components/ui/dialog";
 import { countries } from "@/constants/countries";
+import { FieldLabel } from "../ui/field";
 
 export default function PhoneNumberInput({
   setPhone,
@@ -95,10 +95,10 @@ export default function PhoneNumberInput({
   };
 
   return (
-    <div className="space-y-2">
-      <Label className={cn(labelClassName ?? "")}>
+    <div className="flex flex-col gap-3">
+      <FieldLabel className={cn(labelClassName ?? "")}>
         {label ?? "Phone Number"}
-      </Label>
+      </FieldLabel>
       <div className="flex gap-x-2">
         <Popover open={open} onOpenChange={setOpen} modal>
           <PopoverTrigger asChild>
