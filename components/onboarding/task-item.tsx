@@ -27,7 +27,7 @@ export function TaskItem({
   return (
     <Collapsible open={open && !completed} onOpenChange={onToggle}>
       <CollapsibleTrigger
-        className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-muted/50"
+        className="flex w-full items-center gap-3 rounded-lg border bg-primary p-4 text-left text-white transition-colors hover:bg-primary/80"
         disabled={completed}
       >
         {completed ? (
@@ -36,20 +36,20 @@ export function TaskItem({
           </div>
         ) : (
           <div className="flex size-6 shrink-0 items-center justify-center">
-            <Circle className="text-muted-foreground size-5" />
+            <Circle className="text-slate-400 size-5" />
           </div>
         )}
         <div className="flex-1">
           <p
-            className={`text-sm font-medium ${completed ? "text-muted-foreground line-through" : ""}`}
+            className={`text-sm font-medium ${completed ? "text-slate-500 line-through" : "text-white"}`}
           >
             {title}
           </p>
-          <p className="text-muted-foreground text-xs">{description}</p>
+          <p className="text-slate-400 text-xs">{description}</p>
         </div>
         {!completed && (
           <ChevronDown
-            className={`text-muted-foreground size-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`text-slate-400 size-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           />
         )}
       </CollapsibleTrigger>
