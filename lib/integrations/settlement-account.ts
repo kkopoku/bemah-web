@@ -12,7 +12,7 @@ interface GetSettlementProvidersParams {
 }
 
 export async function getSettlementProviders(
-  params: GetSettlementProvidersParams
+  params: GetSettlementProvidersParams,
 ): Promise<SettlementProvider[]> {
   try {
     const response = await apiClient.get("/settlement-accounts/providers", {
@@ -37,7 +37,6 @@ export async function getSettlementProviders(
 }
 
 interface AddSettlementAccountData {
-  userId: string;
   accountType: "Bank" | "Momo";
   accountProvider: string;
   accountName: string;

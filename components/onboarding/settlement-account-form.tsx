@@ -13,20 +13,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAddSettlementAccount, useGetSettlementProviders } from "@/hooks/use-onboarding";
+import {
+  useAddSettlementAccount,
+  useGetSettlementProviders,
+} from "@/hooks/use-onboarding";
 
 interface SettlementAccountFormProps {
-  userId: string;
   onComplete: () => void;
 }
 
 export function SettlementAccountForm({
-  userId,
   onComplete,
 }: Readonly<SettlementAccountFormProps>) {
   const queryClient = useQueryClient();
   const mutation = useAddSettlementAccount();
-  
+
   const [form, setForm] = useState<{
     accountType: "Bank" | "Momo" | "";
     accountProvider: string;
@@ -39,12 +40,11 @@ export function SettlementAccountForm({
     accountNumber: "",
   });
 
-  const accountTypeKey = form.accountType ? form.accountType.toLowerCase() as "bank" | "momo" : null;
-  const providersQuery = useGetSettlementProviders(
-    accountTypeKey,
-    "gh"
-  );
-  
+  const accountTypeKey = form.accountType
+    ? (form.accountType.toLowerCase() as "bank" | "momo")
+    : null;
+  const providersQuery = useGetSettlementProviders(accountTypeKey, "gh");
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
@@ -58,7 +58,7 @@ export function SettlementAccountForm({
     if (!form.accountType) return;
 
     mutation.mutate(
-      { ...form, userId, accountType: form.accountType as "Bank" | "Momo" },
+      { ...form, accountType: form.accountType },
       {
         onSuccess: () => {
           toast.success("Settlement account added.");
@@ -71,7 +71,7 @@ export function SettlementAccountForm({
           });
           onComplete();
         },
-      }
+      },
     );
   }
 
@@ -103,7 +103,13 @@ export function SettlementAccountForm({
             disabled={!form.accountType || providersQuery.isLoading}
           >
             <SelectTrigger>
-              <SelectValue placeholder={form.accountType ? "Select provider" : "Select account type first"} />
+              <SelectValue
+                placeholder={
+                  form.accountType
+                    ? "Select provider"
+                    : "Select account type first"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {providersQuery.data?.map((provider) => (
@@ -139,7 +145,9 @@ export function SettlementAccountForm({
         <Button
           type="submit"
           size="sm"
-          disabled={mutation.isPending || !form.accountType || !form.accountProvider}
+          disabled={
+            mutation.isPending || !form.accountType || !form.accountProvider
+          }
         >
           {mutation.isPending ? "Submitting..." : "Add Account"}
         </Button>
