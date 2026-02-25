@@ -1,6 +1,6 @@
 "use client";
 
-import { GetStarted } from "@/components/get-started";
+import { GetStarted } from "@/components/custom/get-started";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useOnboardingStatus } from "@/hooks/use-onboarding";
 import { useUserStore } from "@/stores/user.store";
@@ -28,8 +28,10 @@ export default function BusinessDashboardPage() {
 
   if (needsOnboarding && onboardingStatus.data && businessId) {
     return (
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <GetStarted status={onboardingStatus.data} businessId={businessId} />
+      <div className="flex flex-1 justify-center">
+        <div className="w-full max-w-4xl">
+          <GetStarted status={onboardingStatus.data} businessId={businessId} />
+        </div>
       </div>
     );
   }
