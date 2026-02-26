@@ -12,7 +12,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/password-input";
+import { PasswordInput } from "@/components/inputs/password-input";
 import { toast } from "sonner";
 import {
   useForgotPasswordInitiate,
@@ -106,9 +106,7 @@ export function ForgotPasswordForm({
             </Field>
             <Field>
               <Button type="submit" disabled={initiateMutation.isPending}>
-                {initiateMutation.isPending
-                  ? "Sending..."
-                  : "Send Reset Code"}
+                {initiateMutation.isPending ? "Sending..." : "Send Reset Code"}
               </Button>
             </Field>
             {initiateMutation.isError && (
@@ -138,8 +136,7 @@ export function ForgotPasswordForm({
             <h1 className="text-2xl font-bold">Reset your password</h1>
             <p className="text-muted-foreground text-sm text-balance">
               Enter the 6-digit code sent to{" "}
-              <span className="font-medium">{email}</span> and your new
-              password
+              <span className="font-medium">{email}</span> and your new password
             </p>
           </div>
           <Field>

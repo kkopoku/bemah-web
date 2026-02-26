@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/password-input";
+import { PasswordInput } from "@/components/inputs/password-input";
 import {
   Select,
   SelectContent,
@@ -23,7 +23,7 @@ import {
 import { useInitiateSubscriberOnboarding } from "@/hooks/use-subscriber";
 import { useOnboardingStore } from "@/stores/onboarding.store";
 import { toast } from "sonner";
-import PhoneNumberInput from "@/components/phone-number-input";
+import PhoneNumberInput from "@/components/inputs/phone-number-input";
 
 export default function SubscriberInfoPage() {
   const router = useRouter();

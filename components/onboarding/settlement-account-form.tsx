@@ -13,28 +13,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAddSettlementAccount } from "@/hooks/use-onboarding";
+import {
+  useAddSettlementAccount,
+  useGetSettlementProviders,
+} from "@/hooks/use-onboarding";
 
 interface SettlementAccountFormProps {
-  businessId: string;
   onComplete: () => void;
 }
 
 export function SettlementAccountForm({
-  businessId,
   onComplete,
 }: Readonly<SettlementAccountFormProps>) {
   const queryClient = useQueryClient();
   const mutation = useAddSettlementAccount();
-  const [form, setForm] = useState({
+
+  const [form, setForm] = useState<{
+    accountType: "Bank" | "Momo" | "";
+    accountProvider: string;
+    accountName: string;
+    accountNumber: string;
+  }>({
     accountType: "",
     accountProvider: "",
     accountName: "",
     accountNumber: "",
   });
 
+  const accountTypeKey = form.accountType
+    ? (form.accountType.toLowerCase() as "bank" | "momo")
+    : null;
+  const providersQuery = useGetSettlementProviders(accountTypeKey, "gh");
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  function handleAccountTypeChange(value: "Bank" | "Momo") {
+    setForm((prev) => ({ ...prev, accountType: value, accountProvider: "" }));
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -42,7 +58,7 @@ export function SettlementAccountForm({
     if (!form.accountType) return;
 
     mutation.mutate(
-      { ...form, businessId },
+      { ...form, accountType: form.accountType },
       {
         onSuccess: () => {
           toast.success("Settlement account added.");
@@ -55,7 +71,7 @@ export function SettlementAccountForm({
           });
           onComplete();
         },
-      }
+      },
     );
   }
 
@@ -66,9 +82,7 @@ export function SettlementAccountForm({
           <FieldLabel>Account Type</FieldLabel>
           <Select
             value={form.accountType}
-            onValueChange={(v) =>
-              setForm((prev) => ({ ...prev, accountType: v }))
-            }
+            onValueChange={(v) => handleAccountTypeChange(v as "Bank" | "Momo")}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select account type" />
@@ -80,15 +94,31 @@ export function SettlementAccountForm({
           </Select>
         </Field>
         <Field>
-          <FieldLabel htmlFor="gs-accountProvider">Account Provider</FieldLabel>
-          <Input
-            id="gs-accountProvider"
-            name="accountProvider"
+          <FieldLabel>Account Provider</FieldLabel>
+          <Select
             value={form.accountProvider}
-            onChange={handleChange}
-            placeholder="e.g. GCB Bank"
-            required
-          />
+            onValueChange={(v) =>
+              setForm((prev) => ({ ...prev, accountProvider: v }))
+            }
+            disabled={!form.accountType || providersQuery.isLoading}
+          >
+            <SelectTrigger>
+              <SelectValue
+                placeholder={
+                  form.accountType
+                    ? "Select provider"
+                    : "Select account type first"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {providersQuery.data?.map((provider) => (
+                <SelectItem key={provider.code} value={provider.code}>
+                  {provider.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
         <Field>
           <FieldLabel htmlFor="gs-accountName">Account Name</FieldLabel>
@@ -115,7 +145,9 @@ export function SettlementAccountForm({
         <Button
           type="submit"
           size="sm"
-          disabled={mutation.isPending || !form.accountType}
+          disabled={
+            mutation.isPending || !form.accountType || !form.accountProvider
+          }
         >
           {mutation.isPending ? "Submitting..." : "Add Account"}
         </Button>

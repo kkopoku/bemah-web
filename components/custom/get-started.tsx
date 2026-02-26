@@ -90,7 +90,6 @@ export function GetStarted({ status, businessId }: Readonly<GetStartedProps>) {
           onToggle={() => toggleTask("settlement")}
         >
           <SettlementAccountForm
-            businessId={businessId}
             onComplete={() => setOpenTask(firstIncompleteTask)}
           />
         </TaskItem>
